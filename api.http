@@ -1,0 +1,24 @@
+### 1. Lấy chi tiết khóa học (GET)
+GET http://localhost:3000/api/courses/1
+
+### 2. Xem danh sách khóa học của User 1 (GET)
+GET http://localhost:3000/api/my-courses/1
+
+### 3. Đăng ký khóa học mới (POST)
+# Đăng ký cho User 1 (Nguyễn Thị Bé) vào khóa học 3 (Python)
+POST http://localhost:3000/api/enroll
+Content-Type: application/json
+
+{
+    "MaNguoiDung": 1,
+    "MaKhoaHoc": 3
+}
+
+### 4. Test lỗi: Đăng ký lại khóa đã học (Sẽ báo lỗi 400)
+POST http://localhost:3000/api/enroll
+Content-Type: application/json
+
+{
+    "MaNguoiDung": 1,
+    "MaKhoaHoc": 1
+}
