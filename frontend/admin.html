@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Quản Trị (Admin)</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .section { border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Khu vực dành cho Admin/Dev</h1>
+    <a href="index.html">← Quay về Trang chủ</a>
+    <hr>
+
+    <div class="section">
+        <h2>1. Thêm Khóa Học Mới</h2>
+        <form id="add-course-form">
+            <input type="text" id="c-name" placeholder="Tên khóa học" required><br><br>
+            <input type="text" id="c-desc" placeholder="Mô tả" required><br><br>
+            <input type="number" id="c-price" placeholder="Học phí" required><br><br>
+            <input type="text" id="c-duration" placeholder="Thời lượng (vd: 30 giờ)"><br><br>
+            <button type="submit">Tạo Khóa Học</button>
+        </form>
+    </div>
+
+    <script>
+        // Logic riêng cho trang Admin
+        document.getElementById('add-course-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                TenKhoaHoc: document.getElementById('c-name').value,
+                MoTa: document.getElementById('c-desc').value,
+                HocPhi: Number(document.getElementById('c-price').value),
+                ThoiLuong: document.getElementById('c-duration').value,
+                TrangThai: 'Đang mở'
+            };
+
+            const res = await fetch('http://localhost:5000/api/admin/courses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if(res.ok) {
+                alert('Đã thêm khóa học thành công!');
+                e.target.reset(); // Xóa trắng form
+            } else {
+                alert('Lỗi khi thêm khóa học');
+            }
+        });
+        
+        // Bảo vệ trang: Nếu không phải Admin thì đá về trang chủ
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || user.VaiTro !== 'Admin') {
+            alert('Bạn không có quyền truy cập trang này!');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

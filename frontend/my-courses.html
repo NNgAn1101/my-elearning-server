@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Khóa học của tôi</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="index.html">My E-Learning</a></h1>
+            <div id="auth-links"></div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2>Khóa học tôi đã đăng ký</h2>
+        <div id="my-course-list">
+            <p>Đang tải...</p>
+        </div>
+        <br>
+        <a href="index.html">← Quay lại trang chủ để tìm thêm khóa học</a>
+    </div>
+
+    <script src="js/main.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            // Nếu chưa đăng nhập thì đá về trang login
+            if (!user) {
+                alert("Vui lòng đăng nhập để xem!");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const container = document.getElementById('my-course-list');
+            try {
+                // Gọi API lấy danh sách khóa đã mua
+                const res = await fetch(`http://localhost:3000/api/my-courses/${user._id}`);
+                const data = await res.json();
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p>Bạn chưa đăng ký khóa học nào.</p>';
+                } else {
+                    container.innerHTML = data.map(item => `
+                        <div class="course-card" style="border-left: 5px solid #27ae60;">
+                            <h3>${item.MaKhoaHoc.TenKhoaHoc}</h3>
+                            <p>Giảng viên ID: ${item.MaKhoaHoc.MaGiangVien}</p>
+                            <p>Ngày đăng ký: ${new Date(item.NgayDangKy).toLocaleDateString('vi-VN')}</p>
+                            <button class="btn-enroll" style="background:#3498db">Vào học ngay</button>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p>Lỗi khi tải dữ liệu.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
